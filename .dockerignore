@@ -1,8 +1,27 @@
-# Ignore everything at the root level except malva-mcp
-*
-!malva-mcp/
+# Ignore root-level Next.js app files
+/app
+/components
+/lib
+/public
+/node_modules
+/.next
+/out
+/.vercel
+/.cursor
+/.claude
+/.claude-plugin
+next.config.ts
+postcss.config.mjs
+components.json
+eslint.config.mjs
+tsconfig.json
+package.json
+package-lock.json
+pnpm-lock.yaml
+README.md
+todo.md
 
-# But within malva-mcp, ignore these:
+# Ignore within malva-mcp
 malva-mcp/node_modules
 malva-mcp/dist
 malva-mcp/*.tsbuildinfo
@@ -17,10 +36,13 @@ malva-mcp/DEPLOYMENT.md
 malva-mcp/.dockerignore
 malva-mcp/.claude
 malva-mcp/.claude-plugin
-malva-mcp/tests/
+malva-mcp/tests
 
-# Keep package files and source
-!malva-mcp/package.json
-!malva-mcp/package-lock.json
-!malva-mcp/tsconfig.json
-!malva-mcp/src/
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+RAILWAY_DEPLOYMENT.md
+docs
