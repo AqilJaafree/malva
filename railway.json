@@ -2,7 +2,10 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
-    "dockerfilePath": "malva-mcp/Dockerfile"
+    "dockerfilePath": "malva-mcp/Dockerfile",
+    "watchPatterns": [
+      "malva-mcp/**"
+    ]
   },
   "deploy": {
     "numReplicas": 1,

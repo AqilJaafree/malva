@@ -3,15 +3,15 @@ FROM public.ecr.aws/docker/library/node:20-slim AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files from malva-mcp directory
+COPY malva-mcp/package*.json ./
 
 # Install dependencies (including devDependencies for build)
 RUN npm ci
 
-# Copy source code
-COPY tsconfig.json ./
-COPY src ./src
+# Copy source code from malva-mcp directory
+COPY malva-mcp/tsconfig.json ./
+COPY malva-mcp/src ./src
 
 # Build the TypeScript project
 RUN npm run build
@@ -24,8 +24,8 @@ RUN groupadd -r mcpuser && useradd -r -g mcpuser mcpuser
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files from malva-mcp directory
+COPY malva-mcp/package*.json ./
 
 # Install only production dependencies
 RUN npm ci --omit=dev && \
