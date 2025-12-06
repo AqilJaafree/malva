@@ -22,7 +22,8 @@ A complete checklist and PRD for your crypto AI analytics + DCA platform.
 ## **2. Onboarding Flow**
 
 * [x] Build wallet creation modal (Privy)
-* [x] Build portfolio style selection popup (3-step flow)
+* [x] Build asset selection popup (BTC/GOLD choice)
+* [x] Build 3-step onboarding flow (Asset → Investment → Goal)
 * [x] Add monthly investment amount question
 * [x] Add investment goal question
 * [x] Save onboarding data to localStorage (temporary cache)
@@ -45,7 +46,7 @@ A complete checklist and PRD for your crypto AI analytics + DCA platform.
 
 ## **4. Analytics Engine**
 
-* [ ] Integrate x402 real-time BTC/SOL/ETH data
+* [ ] Integrate x402 real-time BTC/GOLD data
 * [ ] Build risk scoring algorithm (simple version)
 * [ ] Build trend analysis module
 * [ ] Daily volatility score
@@ -115,16 +116,16 @@ A platform that combines:
 * Embedded crypto wallet (Privy)
 * AI analytics & insights (x402)
 * Automated DCA execution (Jupiter)
-* Strategy-based investing templates
+* Focus on Bitcoin (BTC) and Gold assets
 
-Targeted at users who want high-quality market insights + automated crypto investing without complexity.
+Targeted at users who want high-quality market insights + automated investing in Bitcoin and Gold without complexity.
 
 ---
 
 ## **2. Objectives**
 
-* Provide real-time Wall Street–grade market analytics to everyday users
-* Allow users to automatically DCA using simple portfolio styles
+* Provide real-time Wall Street–grade market analytics for BTC and Gold
+* Allow users to automatically DCA into Bitcoin or Gold
 * Remove friction from onboarding with an embedded wallet
 * Deliver a chatbot-centric interface for analysis & execution
 
@@ -138,15 +139,12 @@ Targeted at users who want high-quality market insights + automated crypto inves
 * No seed phrase friction
 * Authentication via email/social login
 
-### **3.2 Portfolio Style Selection**
+### **3.2 Asset Selection**
 
-* Moderate
-* Conservative
-* Aggressive
-* AI Smart Portfolio
-* Halving Model
+* Bitcoin (BTC) - Digital gold, decentralized cryptocurrency
+* Gold - Traditional store of value
 
-System stores user’s choice and adapts analytics.
+Users choose their primary asset focus (BTC or GOLD) for DCA and analytics.
 
 ### **3.3 AI Chat Interface**
 
@@ -204,7 +202,7 @@ System stores user’s choice and adapts analytics.
 
 ## **6. Success Metrics (KPIs)**
 
-* **Activation rate**: % users who complete wallet + portfolio style
+* **Activation rate**: % users who complete wallet + asset selection
 * **DCA conversion rate**: % users who start a DCA job
 * **Daily active users** (DAU)
 * **Chat engagement rate**

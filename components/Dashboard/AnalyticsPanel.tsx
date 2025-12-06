@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts';
 import { AssetCard } from "./AssetCard";
-import { Wallet, X } from "lucide-react";
+import { TrendingUp, X } from "lucide-react";
 import { Button } from '@/components/ui/button';
+import { DCASetupModal } from '@/components/DCA';
 
 const data = [
   { name: 'Jan', value: 400 },
@@ -19,10 +21,24 @@ interface AnalyticsPanelProps {
 }
 
 export function AnalyticsPanel({ onClose }: AnalyticsPanelProps) {
+  const [showDCAModal, setShowDCAModal] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState<'BTC' | 'GOLD'>('BTC');
+
+  const handleOpenDCA = (asset: 'BTC' | 'GOLD') => {
+    setSelectedAsset(asset);
+    setShowDCAModal(true);
+  };
+
   return (
     <div className={`w-full pb-4 pt-0 md:pb-6 md:pt-6 overflow-y-auto md:border md:border-l md:border-r-0 md:border-t-0 md:border-b-0 relative ${
       onClose ? 'h-[calc(100vh-4rem)]' : 'h-full'
     }`}>
+      {/* DCA Setup Modal */}
+      <DCASetupModal 
+        open={showDCAModal} 
+        onOpenChange={setShowDCAModal}
+        asset={selectedAsset}
+      />
       {/* Mobile Close Button */}
       {onClose && (
         <div className="md:hidden sticky top-0 z-10 flex justify-between items-center mb-4 p-4 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -78,24 +94,36 @@ export function AnalyticsPanel({ onClose }: AnalyticsPanelProps) {
         </div>
       </div>
 
-      {/* Liquid Staking Portfolio & Active Staking */}
+      {/* Start DCA & Active Staking */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4">
-        {/* Left: Portfolio Card */}
+        {/* Left: Start DCA Card */}
         <div className="lg:col-span-1 bg-linear-to-br from-primary to-primary/80 rounded-3xl p-6 text-primary-foreground relative overflow-hidden">
           <div className="relative z-10">
             <div className="flex justify-between items-start mb-8">
               <div className="bg-primary-foreground/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium">
-                New
+                Automate
               </div>
             </div>
-            <h3 className="text-2xl font-bold mb-2">Liquid Staking Portfolio</h3>
+            <h3 className="text-2xl font-bold mb-2">Start Dollar-Cost Averaging</h3>
             <p className="text-primary-foreground/70 text-sm mb-8">
-              An all-in-one portfolio that helps you make smarter investments into Ethereum Liquid Staking.
+              Set up automatic investments in Bitcoin or Gold and grow your portfolio over time.
             </p>
-            <button className="w-full bg-primary-foreground text-primary font-semibold py-3 rounded-xl mb-3 flex items-center justify-center gap-2 hover:bg-primary-foreground/90 transition-colors">
-              <Wallet className="h-4 w-4" />
-              Connect with Wallet
-            </button>
+            <div className="space-y-2">
+              <button 
+                onClick={() => handleOpenDCA('BTC')}
+                className="w-full bg-primary-foreground text-primary font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-primary-foreground/90 transition-colors"
+              >
+                <TrendingUp className="h-4 w-4" />
+                DCA Bitcoin
+              </button>
+              <button 
+                onClick={() => handleOpenDCA('GOLD')}
+                className="w-full bg-primary-foreground/20 backdrop-blur-md text-primary-foreground border border-primary-foreground/30 font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-primary-foreground/30 transition-colors"
+              >
+                <TrendingUp className="h-4 w-4" />
+                DCA Gold
+              </button>
+            </div>
           </div>
           {/* Decorative circles */}
           <div className="absolute top-0 right-0 h-64 w-64 bg-primary-foreground/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />

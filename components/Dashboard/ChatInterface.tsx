@@ -243,10 +243,10 @@ export function ChatInterface({ onMessageSent, onBotResponseComplete, onToggleAn
           <Button 
             type="submit" 
             size="icon"
-            className="absolute right-3 top-3 h-10 w-10 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-transform hover:scale-105"
+            className="absolute gap-0 right-3 top-3 h-10 w-10 flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-transform hover:scale-105"
             disabled={!input.trim()}
           >
-            <Send size={18} className="ml-0.5" />
+            <Send size={18} />
           </Button>
         </motion.form>
       </div>
