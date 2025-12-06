@@ -51,7 +51,7 @@ export function LoginForm() {
   if (!ready) {
     return (
       <div className="flex items-center justify-center">
-        <div className="text-zinc-600 dark:text-zinc-400">Loading...</div>
+        <div className="text-muted-foreground">Loading...</div>
       </div>
     );
   }

@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import { usePrivy } from '@privy-io/react-auth';
-import { useWallets, useCreateWallet } from '@privy-io/react-auth/solana';
-import { useState } from 'react';
+import { usePrivy } from "@privy-io/react-auth";
+import { useWallets, useCreateWallet } from "@privy-io/react-auth/solana";
+import { useState } from "react";
 
-export default function WalletInfo() {
+interface WalletInfoProps {
+  variant?: "card" | "compact";
+}
+
+export default function WalletInfo({ variant = "card" }: WalletInfoProps) {
   const { authenticated } = usePrivy();
   const { wallets, ready } = useWallets();
-  const [manualCreationError, setManualCreationError] = useState<string | null>(null);
+  const [manualCreationError, setManualCreationError] = useState<string | null>(
+    null
+  );
 
   const { createWallet } = useCreateWallet();
 
@@ -18,9 +24,9 @@ export default function WalletInfo() {
     setManualCreationError(null);
     try {
       const wallet = await createWallet();
-      console.log('Wallet created successfully:', wallet);
+      console.log("Wallet created successfully:", wallet);
     } catch (error) {
-      console.error('Error creating wallet:', error);
+      console.error("Error creating wallet:", error);
       setManualCreationError(String(error));
     }
   };
@@ -30,14 +36,23 @@ export default function WalletInfo() {
   }
 
   if (!ready || isCreatingWallet) {
+    if (variant === "compact") {
+      return (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="animate-spin h-3 w-3 border-2 border-muted-foreground border-t-transparent rounded-full"></div>
+          Creating wallet...
+        </div>
+      );
+    }
+
     return (
-      <div className="flex flex-col gap-4 w-full max-w-md p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-        <h3 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">
+      <div className="flex flex-col gap-4 w-full max-w-md p-6 rounded-2xl border border-border bg-card">
+        <h3 className="text-xl font-semibold text-card-foreground">
           Your Wallet
         </h3>
         <div className="flex items-center gap-2">
-          <div className="animate-spin h-4 w-4 border-2 border-zinc-950 dark:border-zinc-50 border-t-transparent rounded-full"></div>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <div className="animate-spin h-4 w-4 border-2 border-foreground border-t-transparent rounded-full"></div>
+          <p className="text-sm text-muted-foreground">
             Creating your embedded wallet...
           </p>
         </div>
@@ -48,56 +63,63 @@ export default function WalletInfo() {
   // Get the first wallet (Privy embedded wallet for Solana)
   const displayWallet = wallets.length > 0 ? wallets[0] : null;
 
+  if (variant === "compact") {
+    return displayWallet ? (
+      <div className="flex items-center gap-2 bg-muted rounded-full px-3 py-1.5 border border-border">
+        <div className="h-2 w-2 rounded-full bg-green-500"></div>
+        <span className="text-xs font-mono text-muted-foreground">
+          {displayWallet.address.slice(0, 4)}...
+          {displayWallet.address.slice(-4)}
+        </span>
+      </div>
+    ) : null;
+  }
+
   return (
-    <div className="flex flex-col gap-4 w-full max-w-md p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-      <h3 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">
+    <div className="flex flex-col gap-4 w-full max-w-md p-6 rounded-2xl border border-border bg-card">
+      <h3 className="text-xl font-semibold text-card-foreground">
         Your Wallet
       </h3>
-      
+
       {displayWallet ? (
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Wallet Address:
-          </p>
-          <code className="text-xs font-mono text-zinc-950 dark:text-zinc-50 bg-zinc-100 dark:bg-zinc-800 p-2 rounded break-all">
+          <p className="text-sm text-muted-foreground">Wallet Address:</p>
+          <code className="text-xs font-mono text-card-foreground bg-muted p-2 rounded break-all">
             {displayWallet.address}
           </code>
           <div className="flex flex-col gap-1 mt-2">
-            <p className="text-xs text-zinc-500 dark:text-zinc-500">
+            <p className="text-xs text-muted-foreground">
               Type: Embedded Wallet (Privy)
             </p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-500">
-              Chain: Solana
-            </p>
+            <p className="text-xs text-muted-foreground">Chain: Solana</p>
           </div>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            No wallet found. 
+          <p className="text-sm text-muted-foreground">No wallet found.</p>
+          <p className="text-xs text-muted-foreground">
+            Automatic wallet creation didn&apos;t complete. You can create one
+            manually below.
           </p>
-          <p className="text-xs text-zinc-500 dark:text-zinc-500">
-            Automatic wallet creation didn&apos;t complete. You can create one manually below.
-          </p>
-          
+
           {manualCreationError && (
-            <div className="p-2 rounded bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800">
-              <p className="text-xs text-red-700 dark:text-red-300">
+            <div className="p-2 rounded bg-destructive/10 border border-destructive/20">
+              <p className="text-xs text-destructive">
                 Error: {manualCreationError}
               </p>
             </div>
           )}
-          
+
           <button
             onClick={handleManualCreateWallet}
             disabled={isCreatingWallet}
-            className="flex h-10 items-center justify-center rounded-full bg-zinc-950 dark:bg-zinc-50 px-4 text-sm text-white dark:text-zinc-950 transition-colors hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex h-10 items-center justify-center rounded-full bg-primary px-4 text-sm text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Create wallet manually"
           >
-            {isCreatingWallet ? 'Creating Wallet...' : 'Create Wallet Manually'}
+            {isCreatingWallet ? "Creating Wallet..." : "Create Wallet Manually"}
           </button>
-          
-          <p className="text-xs text-zinc-500 dark:text-zinc-500">
+
+          <p className="text-xs text-muted-foreground">
             Or try logging out and back in to trigger automatic creation.
           </p>
         </div>
@@ -105,4 +127,3 @@ export default function WalletInfo() {
     </div>
   );
 }
-

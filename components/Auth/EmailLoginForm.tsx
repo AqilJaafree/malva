@@ -17,31 +17,46 @@ export function EmailLoginForm({
   disabled = false 
 }: EmailLoginFormProps) {
   return (
-    <div className="flex flex-col gap-4 w-full max-w-md">
-      <h2 className="text-2xl font-semibold text-zinc-950 dark:text-zinc-50">
-        Login with Email
-      </h2>
-      
-      <div className="flex flex-col gap-3">
-        <Input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => onEmailChange(e.currentTarget.value)}
-          aria-label="Email address"
-          disabled={disabled}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && email) {
-              onSubmit();
-            }
-          }}
-        />
+    <div className="w-full max-w-md bg-card backdrop-blur-sm rounded-2xl border border-border p-8 shadow-lg">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-foreground mb-2">
+          Login to your account
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Enter your email below to login to your account
+        </p>
+      </div>
+
+      {/* Email Field */}
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="email" className="text-sm font-medium text-foreground">
+            Email
+          </label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@gmail.com"
+            value={email}
+            onChange={(e) => onEmailChange(e.currentTarget.value)}
+            aria-label="Email address"
+            disabled={disabled}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && email) {
+                onSubmit();
+              }
+            }}
+          />
+        </div>
+
+        {/* Send Code Button */}
         <Button
           onClick={onSubmit}
           disabled={!email || disabled}
           className="w-full"
         >
-          Send Code
+          {disabled ? 'Sending...' : 'Send Code'}
         </Button>
       </div>
     </div>
