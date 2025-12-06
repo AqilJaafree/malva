@@ -1,0 +1,26 @@
+# Ignore everything at the root level except malva-mcp
+*
+!malva-mcp/
+
+# But within malva-mcp, ignore these:
+malva-mcp/node_modules
+malva-mcp/dist
+malva-mcp/*.tsbuildinfo
+malva-mcp/.env*
+malva-mcp/.vscode
+malva-mcp/.idea
+malva-mcp/coverage
+malva-mcp/**/*.test.ts
+malva-mcp/**/*.spec.ts
+malva-mcp/README.md
+malva-mcp/DEPLOYMENT.md
+malva-mcp/.dockerignore
+malva-mcp/.claude
+malva-mcp/.claude-plugin
+malva-mcp/tests/
+
+# Keep package files and source
+!malva-mcp/package.json
+!malva-mcp/package-lock.json
+!malva-mcp/tsconfig.json
+!malva-mcp/src/
