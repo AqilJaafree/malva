@@ -137,7 +137,18 @@
       "Bash(then echo \".env file exists - checking if tracked by git\")",
       "Bash(else echo \".env file does not exist\")",
       "Bash(fi)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(then echo \".env file exists\")",
+      "Bash(else cp .env.example .env)",
+      "Bash(node verify-env.mjs:*)",
+      "Bash(node test-x402-payment.mjs:*)",
+      "Bash(node test-x402-integration-basic.mjs:*)",
+      "Bash(TEST_WALLET_PRIVATE_KEY=\"378HjMhKk2RPbEdm66NXXJiFYAxYJ3BE9Zss9srSxdzhfqFCC7a1bm2iTPDvU653Tz8Cg9iY453y1e6ERGm5DauU\" node test-x402-payment.mjs:*)",
+      "Bash(X402_TREASURY_ADDRESS=YV2C7YyrkH67jTRZHvwovJfSK6BqiJJMycmRSXSWEy2 pnpm dev:*)",
+      "Bash(X402_TREASURY_ADDRESS=YV2C7YyrkH67jTRZHvwovJfSK6BqiJJMycmRSXSWEy2 TEST_WALLET_PRIVATE_KEY=\"378HjMhKk2RPbEdm66NXXJiFYAxYJ3BE9Zss9srSxdzhfqFCC7a1bm2iTPDvU653Tz8Cg9iY453y1e6ERGm5DauU\" node test-x402-payment.mjs)",
+      "WebFetch(domain:docs.payai.network)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" pnpm exec tsc:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

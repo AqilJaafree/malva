@@ -20,8 +20,11 @@ export class PriceService {
   private cacheTTL = parseInt(process.env.CACHE_TTL || '5000');
   private readonly MAX_CACHE_SIZE = 100;
 
-  // Jupiter Price API - Use lite API for public access (no auth required)
-  private jupiterPriceApiUrl = process.env.JUPITER_PRICE_API_URL || 'https://lite-api.jup.ag/price/v3';
+  // Jupiter Price API - Use Pro API with key for higher rate limits, or Lite API (free, no key)
+  private jupiterApiKey = process.env.JUPITER_API_KEY;
+  private jupiterPriceApiUrl = this.jupiterApiKey
+    ? (process.env.JUPITER_PRICE_API_URL || 'https://api.jup.ag/price/v3')  // Pro API
+    : (process.env.JUPITER_PRICE_API_URL || 'https://lite-api.jup.ag/price/v3');  // Lite API
   private solanaRpcUrl = process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com';
 
   // OHLC candle storage: Map<mintAddress, Map<interval, candles[]>>
@@ -85,9 +88,19 @@ export class PriceService {
 
     return this.fetchWithCache(cacheKey, async () => {
       try {
-        const response = await fetch(
-          `${this.jupiterPriceApiUrl}?ids=${asset.mintAddress}&showExtraInfo=true`
-        );
+        // Build URL
+        const url = `${this.jupiterPriceApiUrl}?ids=${asset.mintAddress}&showExtraInfo=true`;
+
+        // Build headers with API key if available
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json'
+        };
+
+        if (this.jupiterApiKey) {
+          headers['x-api-key'] = this.jupiterApiKey;
+        }
+
+        const response = await fetch(url, { headers });
 
         if (!response.ok) {
           throw new Error(`Jupiter Price API error: ${response.status}`);

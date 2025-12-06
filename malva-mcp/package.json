@@ -1,13 +1,13 @@
 {
-  "name": "solana-rwa-price-mcp",
+  "name": "malva-mcp",
   "version": "1.0.0",
   "description": "MCP Server for Real-time Solana RWA Asset Prices (Wrapped BTC, RWA Stocks, Gold)",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=4096\" tsc",
+    "start": "tsx src/server.ts",
     "dev": "tsx watch src/server.ts",
     "clean": "rm -rf dist"
   },
@@ -25,9 +25,14 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.0",
+    "@payai/x402-solana": "^0.1.0",
+    "@solana/spl-token": "^0.4.14",
+    "@solana/web3.js": "^1.98.4",
+    "bs58": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
     "zod": "^3.25.67"
   },
   "devDependencies": {

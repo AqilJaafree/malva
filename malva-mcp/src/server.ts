@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { createMCPServer } from "./mcp-server.js";
+import { initializeX402Payment, x402Manager, verifyToolPayment, settleToolPayment, TOOL_PRICING } from "./utils/x402-payment-handler.js";
 
 import type { Request, Response } from "express";
 
@@ -37,9 +38,11 @@ app.use(cors({
     'Content-Type',
     'mcp-session-id',
     'mcp-protocol-version',
-    'Authorization'
+    'Authorization',
+    'X-PAYMENT',
+    'X-PAYMENT-RESPONSE'
   ],
-  exposedHeaders: ['mcp-session-id'],
+  exposedHeaders: ['mcp-session-id', 'X-PAYMENT-RESPONSE'],
   credentials: false // Changed to false for security - only use true if absolutely needed
 }));
 app.use(express.json());
@@ -49,12 +52,69 @@ const transports: Record<string, StreamableHTTPServerTransport> = {};
 
 console.log("Starting Solana RWA Price Tracking MCP Server...");
 
-// MCP endpoint handler function
+// Initialize x402 payment system
+try {
+  initializeX402Payment();
+  console.log("💳 x402 Payment System Enabled");
+} catch (error) {
+  console.error("⚠️  Failed to initialize x402 payment system:", error);
+  console.log("⚠️  Server will run without payment gating");
+}
+
+// MCP endpoint handler function with x402 payment verification
 const handleMCPRequest = async (req: Request, res: Response): Promise<void> => {
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   let transport: StreamableHTTPServerTransport;
 
   try {
+    // Check if this is a tool call that requires payment
+    const isToolCall = req.body?.method === 'tools/call';
+    const toolName = isToolCall ? req.body?.params?.name : null;
+
+    // Verify payment for tool calls
+    if (isToolCall && toolName) {
+      const resourceUrl = `mcp://tools/${toolName}`;
+      const headers = req.headers as Record<string, string | string[] | undefined>;
+
+      const verificationResult = await verifyToolPayment(toolName, headers, resourceUrl);
+
+      if (!verificationResult.verified) {
+        // Return 402 Payment Required error in JSON-RPC format
+        const pricing = TOOL_PRICING[toolName];
+        res.status(402).json({
+          jsonrpc: '2.0',
+          error: {
+            code: -32001,
+            message: verificationResult.error || 'Payment Required',
+            data: {
+              payment: verificationResult.requirements,
+              pricing: pricing ? {
+                amount: pricing.amount,
+                formatted: `$${(parseInt(pricing.amount) / 1_000_000).toFixed(3)} USDC`,
+                description: pricing.description
+              } : null,
+              instructions: 'Include X-PAYMENT header with signed transaction proof. See https://docs.payai.network/x402'
+            }
+          },
+          id: req.body?.id || null
+        });
+        return;
+      }
+
+      console.log(`✅ Payment verified for tool: ${toolName}`);
+
+      // Settle payment (submit transaction to blockchain)
+      if (verificationResult.paymentHeader && verificationResult.requirements) {
+        try {
+          await settleToolPayment(verificationResult.paymentHeader, verificationResult.requirements);
+          console.log(`✅ Payment settled for tool: ${toolName}`);
+        } catch (error) {
+          console.error(`❌ Payment settlement failed for ${toolName}:`, error);
+          // Continue anyway - payment was verified, settlement can be retried
+        }
+      }
+    }
+
     if (sessionId && transports[sessionId]) {
       // Reuse existing transport for the session
       transport = transports[sessionId];
@@ -166,15 +226,59 @@ app.get('/', (_req: Request, res: Response) => {
     endpoints: {
       mcp: 'POST /',
       health: 'GET /health',
-      info: 'GET /'
+      info: 'GET /',
+      pricing: 'GET /pricing'
     },
     capabilities: {
       resources: 1,
-      tools: 3,
+      tools: 11,
       prompts: 1
+    },
+    payment: {
+      enabled: true,
+      protocol: 'x402',
+      network: 'solana',
+      documentation: 'https://docs.payai.network/x402'
     },
     documentation: 'https://github.com/modelcontextprotocol/specification'
   });
+});
+
+// Pricing endpoint - shows x402 payment requirements for tools
+app.get('/pricing', (_req: Request, res: Response) => {
+  try {
+    const pricingInfo = x402Manager.getPricingInfo();
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      payment: {
+        protocol: 'x402',
+        network: pricingInfo.network,
+        treasuryAddress: pricingInfo.treasury,
+        token: {
+          mint: pricingInfo.token,
+          symbol: 'USDC',
+          decimals: 6,
+          name: 'USD Coin'
+        },
+        facilitator: pricingInfo.facilitator
+      },
+      tools: Object.entries(pricingInfo.tools).map(([name, config]) => ({
+        name,
+        description: config.description,
+        price: {
+          amount: config.amount,
+          formatted: `$${(parseInt(config.amount) / 1_000_000).toFixed(3)} USDC`
+        }
+      }))
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to retrieve pricing information',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 // Start the server
