@@ -3,7 +3,7 @@
  * Fetches crypto news from the news API
  */
 
-import { NewsResponse, NewsArticle, NewsFilterOptions, NewsSummary } from '../types/news.js';
+import { NewsResponse, NewsArticle, NewsSummary } from '../types/news.js';
 
 export class NewsService {
   private newsApiUrl: string;

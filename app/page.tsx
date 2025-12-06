@@ -9,13 +9,13 @@ export default function Home() {
   const { authenticated, ready } = usePrivy();
 
   if (!ready) {
-    return (
+  return (
       <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
         <div className='flex items-center justify-center gap-2'>
           <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
           <span className='text-sm text-muted-foreground'>Loading...</span>
         </div>
-      </div>
+        </div>
     );
   }
 

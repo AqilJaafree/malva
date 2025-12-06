@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Moon, Sun, LogOut } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useWallets } from '@privy-io/react-auth/solana';
 import {
@@ -11,70 +10,43 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
 
-export default function Navbar() {
+interface NavbarProps {
+  onMenuClick?: () => void;
+}
+
+export default function Navbar({ onMenuClick }: NavbarProps) {
   const { logout, user, authenticated } = usePrivy();
   const { wallets } = useWallets();
-  
-  // Initialize theme from localStorage or system preference
-  const getInitialTheme = (): 'light' | 'dark' => {
-    if (typeof window === 'undefined') return 'dark';
-    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    if (storedTheme) return storedTheme;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  };
-  
-  const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme);
-
-  useEffect(() => {
-    // Sync theme with document (already applied by layout script, but ensure consistency)
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
-
-  const handleToggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  };
 
   const displayWallet = wallets.length > 0 ? wallets[0] : null;
 
   return (
     <header className="h-16 border-b border-border flex items-center justify-between px-6 bg-background/50 backdrop-blur-md z-50">
-      {/* Logo */}
-      <div className="flex items-center gap-2">
-        <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
-          <span className="text-background font-bold text-xl">M</span>
+      {/* Left: Menu + Logo */}
+      <div className="flex items-center gap-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onMenuClick}
+          className="h-9 w-9"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
+            <span className="text-background font-bold text-xl">M</span>
+          </div>
+          <span className="font-bold text-lg tracking-tight text-foreground">
+            Malva
+          </span>
         </div>
-        <span className="font-bold text-lg tracking-tight text-foreground">
-          Malva
-        </span>
       </div>
       
       {/* Right side actions */}
       <div className="flex items-center gap-4">
-        {/* Theme Toggle Switch */}
-        <div className="flex items-center gap-2">
-          <Sun size={16} className="text-muted-foreground" />
-          <Switch
-            checked={theme === 'dark'}
-            onCheckedChange={handleToggleTheme}
-            aria-label="Toggle dark mode"
-          />
-          <Moon size={16} className="text-muted-foreground" />
-        </div>
-
         {/* Wallet & User Dropdown */}
         {authenticated && (
           <DropdownMenu>
