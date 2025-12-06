@@ -160,7 +160,12 @@ class X402Manager {
       price: {
         amount: pricing.amount,
         asset: {
-          address: this.config.defaultToken as `0x${string}`
+          address: this.config.defaultToken as `0x${string}`,
+          decimals: 6, // USDC has 6 decimals
+          eip712: {
+            name: 'USD Coin',
+            version: '1'
+          }
         }
       },
       network: this.config.network,
