@@ -1,48 +1,10 @@
-# Ignore root-level Next.js app files
-/app
-/components
-/lib
-/public
-/node_modules
-/.next
-/out
-/.vercel
-/.cursor
-/.claude
-/.claude-plugin
-next.config.ts
-postcss.config.mjs
-components.json
-eslint.config.mjs
-tsconfig.json
-package.json
-package-lock.json
-pnpm-lock.yaml
-README.md
-todo.md
-
-# Ignore within malva-mcp
-malva-mcp/node_modules
-malva-mcp/dist
-malva-mcp/*.tsbuildinfo
-malva-mcp/.env*
-malva-mcp/.vscode
-malva-mcp/.idea
-malva-mcp/coverage
-malva-mcp/**/*.test.ts
-malva-mcp/**/*.spec.ts
-malva-mcp/README.md
-malva-mcp/DEPLOYMENT.md
-malva-mcp/.dockerignore
-malva-mcp/.claude
-malva-mcp/.claude-plugin
-malva-mcp/tests
-
-# Git files
+# Only ignore what's necessary
+node_modules
+.next
 .git
-.gitignore
-.gitattributes
-
-# Documentation
-RAILWAY_DEPLOYMENT.md
-docs
+dist
+*.tsbuildinfo
+.env*
+coverage
+*.test.ts
+*.spec.ts
