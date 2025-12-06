@@ -122,7 +122,10 @@ class X402Manager {
         treasuryAddress: this.config.treasuryAddress,
         facilitatorUrl: this.config.facilitatorUrl,
         rpcUrl: this.config.rpcUrl,
-        defaultToken: this.config.defaultToken
+        defaultToken: {
+          address: this.config.defaultToken,
+          decimals: 6 // USDC has 6 decimals
+        }
       });
 
       console.log('✅ x402 Payment Handler initialized successfully');
@@ -157,13 +160,13 @@ class X402Manager {
       price: {
         amount: pricing.amount,
         asset: {
-          address: this.config.defaultToken
+          address: this.config.defaultToken as `0x${string}`
         }
       },
       network: this.config.network,
       config: {
         description: pricing.description,
-        resource: resourceUrl,
+        resource: resourceUrl as `${string}://${string}`,
         mimeType: 'application/json'
       }
     });
@@ -216,7 +219,8 @@ class X402Manager {
    */
   public extractPayment(headers: Record<string, string | string[] | undefined>): string | undefined {
     const handler = this.getHandler();
-    return handler.extractPayment(headers);
+    const result = handler.extractPayment(headers);
+    return result === null ? undefined : result;
   }
 
   /**
