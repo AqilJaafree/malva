@@ -4,7 +4,7 @@ FROM public.ecr.aws/docker/library/node:20-slim AS builder
 WORKDIR /app
 
 # Copy package files from malva-mcp directory
-COPY malva-mcp/package*.json ./
+COPY malva-mcp/package.json malva-mcp/package-lock.json ./
 
 # Install dependencies (including devDependencies for build)
 RUN npm ci
@@ -25,7 +25,7 @@ RUN groupadd -r mcpuser && useradd -r -g mcpuser mcpuser
 WORKDIR /app
 
 # Copy package files from malva-mcp directory
-COPY malva-mcp/package*.json ./
+COPY malva-mcp/package.json malva-mcp/package-lock.json ./
 
 # Install only production dependencies
 RUN npm ci --omit=dev && \
