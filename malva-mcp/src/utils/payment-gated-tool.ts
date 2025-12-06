@@ -43,14 +43,16 @@ export function registerPaymentGatedTool<T = any>(
   server.registerTool(
     toolName,
     schema,
-    async (args: T, context?: any) => {
+    async (extra: any) => {
+      const args = extra.arguments as T;
+      const context = extra;
       // Skip payment verification if not required
       if (!requirePayment) {
-        return handler(args, context);
+        return handler(args, { headers: extra._meta?.headers });
       }
 
       // Extract headers from context
-      const headers = context?.headers || {};
+      const headers = extra._meta?.headers || {};
 
       // Construct resource URL
       const resourceUrl = `mcp://tools/${toolName}`;
@@ -94,7 +96,7 @@ export function registerPaymentGatedTool<T = any>(
 
         // Payment verified - execute the tool
         console.log(`✅ Payment verified for ${toolName}`);
-        return handler(args, context);
+        return handler(args, { headers: extra._meta?.headers, sessionId: extra._meta?.sessionId });
 
       } catch (error) {
         console.error(`Payment verification error for ${toolName}:`, error);
