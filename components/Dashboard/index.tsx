@@ -1,19 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChatInterface } from './ChatInterface';
 import { AnalyticsPanel } from './AnalyticsPanel';
 import Navbar from '@/components/Navbar';
+import { PortfolioStyleModal, OnboardingData } from '@/components/Onboarding';
 
 export function Dashboard() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [isMobileAnalyticsOpen, setIsMobileAnalyticsOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    // Show onboarding modal after a short delay (always show for debugging)
+    const timer = setTimeout(() => {
+      setShowOnboarding(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleOnboardingComplete = (data: OnboardingData) => {
+    // Don't save to localStorage - just close the modal
+    setShowOnboarding(false);
+    console.log('Onboarding completed:', data);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden flex flex-col">
       <Navbar />
+
+      {/* Onboarding Modal */}
+      <PortfolioStyleModal 
+        open={showOnboarding} 
+        onComplete={handleOnboardingComplete}
+      />
 
       {/* Main Content */}
       <main className="flex-1 relative flex">

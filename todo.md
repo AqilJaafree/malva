@@ -11,6 +11,8 @@ A complete checklist and PRD for your crypto AI analytics + DCA platform.
 * [x] Set up Next.js project
 * [x] Integrate Privy (Auth + Embedded Wallet)
 * [x] Configure Privy wallet creation flow
+* [x] Create login form UI (email + OTP verification)
+* [x] Implement theme system (light/dark mode with persistence)
 * [ ] Implement backend server (Node.js / Next.js API routes)
 <!-- * [ ] Set up database (Supabase / PostgreSQL) -->
 * [ ] Prepare user schema (wallet address, portfolio style, settings)
@@ -20,19 +22,24 @@ A complete checklist and PRD for your crypto AI analytics + DCA platform.
 ## **2. Onboarding Flow**
 
 * [x] Build wallet creation modal (Privy)
-* [ ] Build portfolio style selection popup
-* [ ] Create optional onboarding slides (3-step education)
-* [ ] Save selected portfolio style to DB
+* [x] Build portfolio style selection popup (3-step flow)
+* [x] Add monthly investment amount question
+* [x] Add investment goal question
+* [x] Save onboarding data to localStorage (temporary cache)
+* [ ] Migrate onboarding data to database
+* [ ] Create optional onboarding slides (educational content)
 
 ---
 
 ## **3. Chatbot Main Page**
 
-* [ ] Create chat UI component
+* [x] Create chat UI component
+* [x] Create analytics card response template
+* [x] Auto-show analytics after user query
+* [x] Add starter prompt cards with animations
+* [x] Implement gradient background effects
 * [ ] Connect AI provider (OpenAI / x402 LLM)
 * [ ] Integrate x402 analytics data endpoints
-* [ ] Create analytics card response template
-* [ ] Auto-show analytics after user query
 
 ---
 
@@ -62,7 +69,10 @@ A complete checklist and PRD for your crypto AI analytics + DCA platform.
 
 ## **6. Dashboard**
 
-* [ ] Create portfolio dashboard page
+* [x] Create portfolio dashboard page (main layout with chat + analytics)
+* [x] Create Navbar component with theme toggle
+* [x] Implement light/dark mode theme system
+* [x] Mobile-responsive analytics panel with drawer
 * [ ] Show current holdings (fetch via wallet + Jupiter)
 * [ ] Display next DCA execution date
 * [ ] Display P/L & performance
