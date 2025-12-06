@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChatInterface } from './ChatInterface';
 import { AnalyticsPanel } from './AnalyticsPanel';
 import Navbar from '@/components/Navbar';
+import { Sidebar } from '@/components/Sidebar';
 import { PortfolioStyleModal, OnboardingData } from '@/components/Onboarding';
 
 export function Dashboard() {
@@ -12,6 +13,7 @@ export function Dashboard() {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [isMobileAnalyticsOpen, setIsMobileAnalyticsOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     // Show onboarding modal after a short delay (always show for debugging)
@@ -29,7 +31,8 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden flex flex-col">
-      <Navbar />
+      <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <Navbar onMenuClick={() => setIsSidebarOpen(true)} />
 
       {/* Onboarding Modal */}
       <PortfolioStyleModal 
