@@ -1,0 +1,218 @@
+# 📌 Project To‑Do List & PRD
+
+A complete checklist and PRD for your crypto AI analytics + DCA platform.
+
+---
+
+# ✅ To‑Do List (MVP)
+
+## **1. Foundation Setup**
+
+* [x] Set up Next.js project
+* [x] Integrate Privy (Auth + Embedded Wallet)
+* [x] Configure Privy wallet creation flow
+* [ ] Implement backend server (Node.js / Next.js API routes)
+<!-- * [ ] Set up database (Supabase / PostgreSQL) -->
+* [ ] Prepare user schema (wallet address, portfolio style, settings)
+
+---
+
+## **2. Onboarding Flow**
+
+* [x] Build wallet creation modal (Privy)
+* [ ] Build portfolio style selection popup
+* [ ] Create optional onboarding slides (3-step education)
+* [ ] Save selected portfolio style to DB
+
+---
+
+## **3. Chatbot Main Page**
+
+* [ ] Create chat UI component
+* [ ] Connect AI provider (OpenAI / x402 LLM)
+* [ ] Integrate x402 analytics data endpoints
+* [ ] Create analytics card response template
+* [ ] Auto-show analytics after user query
+
+---
+
+## **4. Analytics Engine**
+
+* [ ] Integrate x402 real-time BTC/SOL/ETH data
+* [ ] Build risk scoring algorithm (simple version)
+* [ ] Build trend analysis module
+* [ ] Daily volatility score
+* [ ] Funding rate + volume tracking
+
+---
+
+## **5. DCA Module (Jupiter)**
+
+* [ ] Connect Jupiter API / SDK
+* [ ] Build DCA setup modal
+
+  * [ ] Select asset
+  * [ ] Select amount
+  * [ ] Select frequency
+* [ ] Implement transaction signer using Privy
+* [ ] Create backend scheduler to handle DCA jobs
+* [ ] Track DCA execution state in DB
+
+---
+
+## **6. Dashboard**
+
+* [ ] Create portfolio dashboard page
+* [ ] Show current holdings (fetch via wallet + Jupiter)
+* [ ] Display next DCA execution date
+* [ ] Display P/L & performance
+* [ ] Allow cancel/edit DCA job
+
+---
+
+## **7. Template Marketplace (Optional MVP)**
+
+* [ ] Create template schema (name, tags, rules, allocation)
+* [ ] UI for browsing templates
+* [ ] Apply template to user portfolio
+* [ ] Add “AI Smart Portfolio” option
+
+---
+
+## **8. Notifications (Optional)**
+
+* [ ] Market risk updates
+* [ ] DCA executed alerts
+* [ ] Cycle signal alerts
+
+---
+
+## **9. Deployment**
+
+* [ ] CI/CD setup
+* [ ] Production environment (Vercel / Fly.io)
+* [ ] Error logging (Sentry)
+* [ ] Analytics tracking (Plausible)
+
+---
+
+# 📝 Product Requirements Document (PRD)
+
+## **1. Product Overview**
+
+A platform that combines:
+
+* Embedded crypto wallet (Privy)
+* AI analytics & insights (x402)
+* Automated DCA execution (Jupiter)
+* Strategy-based investing templates
+
+Targeted at users who want high-quality market insights + automated crypto investing without complexity.
+
+---
+
+## **2. Objectives**
+
+* Provide real-time Wall Street–grade market analytics to everyday users
+* Allow users to automatically DCA using simple portfolio styles
+* Remove friction from onboarding with an embedded wallet
+* Deliver a chatbot-centric interface for analysis & execution
+
+---
+
+## **3. Key Features**
+
+### **3.1 Privy Wallet Integration**
+
+* Users create crypto wallets instantly
+* No seed phrase friction
+* Authentication via email/social login
+
+### **3.2 Portfolio Style Selection**
+
+* Moderate
+* Conservative
+* Aggressive
+* AI Smart Portfolio
+* Halving Model
+
+System stores user’s choice and adapts analytics.
+
+### **3.3 AI Chat Interface**
+
+* Users ask anything about market, prices, trends
+* AI generates insights using x402 real-time data
+* Displays analytics cards (trend score, risk, cycle position)
+
+### **3.4 DCA Automation (Jupiter)**
+
+* Choose asset, amount, frequency
+* Sign transaction using Privy wallet
+* Re-executes automatically based on schedule
+
+### **3.5 Portfolio Dashboard**
+
+* Track holdings
+* Track performance and P/L
+* View and manage DCA schedules
+
+### **3.6 Strategy Templates (Optional)**
+
+* Users choose preset investing templates
+* Templates specify allocations + DCA rules
+
+---
+
+## **4. Non-Functional Requirements**
+
+* **Performance**: Chatbot must respond within 1–2 seconds
+* **Scalability**: Handle 1,000 concurrent users
+* **Security**: Privy self-custody, no private keys in backend
+* **Uptime**: > 99% availability
+
+---
+
+## **5. User Personas**
+
+### **1. Beginner Crypto User**
+
+* Wants to buy BTC safely
+* Doesn’t understand charts
+* Needs simple instructions
+
+### **2. Intermediate Trader**
+
+* Follows market cycles
+* Wants analytics but not expensive subscriptions
+
+### **3. Long-Term Investor**
+
+* Wants automated DCA
+* Wants portfolio performance overview
+
+---
+
+## **6. Success Metrics (KPIs)**
+
+* **Activation rate**: % users who complete wallet + portfolio style
+* **DCA conversion rate**: % users who start a DCA job
+* **Daily active users** (DAU)
+* **Chat engagement rate**
+* **Retention after 30 days**
+
+---
+
+## **7. Risks**
+
+* Market volatility → user hesitation
+* Trust issues → solved by transparent data
+* API rate limits → must cache results
+
+---
+
+## **8. Future Add-ons**
+
+* Copy-trading functionality
+* Advanced portfolio optimization
+* Multi-chain expansion
+* Social feed for analysts

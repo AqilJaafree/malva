@@ -2,40 +2,26 @@
 
 import { usePrivy } from '@privy-io/react-auth';
 import { useWallets, useCreateWallet } from '@privy-io/react-auth/solana';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function WalletInfo() {
-  const { authenticated, user } = usePrivy();
+  const { authenticated } = usePrivy();
   const { wallets, ready } = useWallets();
-  const [isCreatingWallet, setIsCreatingWallet] = useState(false);
   const [manualCreationError, setManualCreationError] = useState<string | null>(null);
 
   const { createWallet } = useCreateWallet();
 
-  useEffect(() => {
-    if (authenticated && ready && wallets.length === 0) {
-      setIsCreatingWallet(true);
-      // Give it some time to create the wallet automatically
-      const timeout = setTimeout(() => {
-        setIsCreatingWallet(false);
-      }, 5000);
-      return () => clearTimeout(timeout);
-    } else if (wallets.length > 0) {
-      setIsCreatingWallet(false);
-    }
-  }, [authenticated, ready, wallets]);
+  // Derive loading state from props instead of setting state in useEffect
+  const isCreatingWallet = authenticated && ready && wallets.length === 0;
 
   const handleManualCreateWallet = async () => {
-    setIsCreatingWallet(true);
     setManualCreationError(null);
     try {
       const wallet = await createWallet();
       console.log('Wallet created successfully:', wallet);
-      setIsCreatingWallet(false);
     } catch (error) {
       console.error('Error creating wallet:', error);
       setManualCreationError(String(error));
-      setIsCreatingWallet(false);
     }
   };
 
@@ -91,7 +77,7 @@ export default function WalletInfo() {
             No wallet found. 
           </p>
           <p className="text-xs text-zinc-500 dark:text-zinc-500">
-            Automatic wallet creation didn't complete. You can create one manually below.
+            Automatic wallet creation didn&apos;t complete. You can create one manually below.
           </p>
           
           {manualCreationError && (

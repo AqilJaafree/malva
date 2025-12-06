@@ -1,6 +1,6 @@
-import LoginButton from "./components/LoginButton";
-import WalletInfo from "./components/WalletInfo";
-import DebugInfo from "./components/DebugInfo";
+import { LoginForm } from "@/components/Auth";
+import WalletInfo from "@/components/WalletInfo";
+// import DebugInfo from "../components/DebugInfo";
 
 export default function Home() {
   return (
@@ -15,11 +15,11 @@ export default function Home() {
           </p>
         </div>
 
-        <LoginButton />
+        <LoginForm />
         <WalletInfo />
       </main>
       
-      <DebugInfo />
+      {/* <DebugInfo /> */}
     </div>
   );
 }
