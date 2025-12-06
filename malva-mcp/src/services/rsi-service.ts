@@ -6,7 +6,7 @@
  */
 
 import { PriceService } from './price-service.js';
-import { SolanaAsset, OHLCData } from '../types/assets.js';
+import { SolanaAsset } from '../types/assets.js';
 import { TimeInterval } from '../config/assets.js';
 import {
   RSIAnalysisResult,
@@ -141,7 +141,7 @@ export class RSIService {
       return { signal: false, confidence: 0, reason: 'RSI values not yet available' };
     }
 
-    let baseScore = 0.5;
+    const baseScore = 0.5;
     let confidence = 0;
     const reasons: string[] = [];
 
