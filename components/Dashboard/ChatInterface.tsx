@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, BarChart3, TrendingUp, Coins, PieChart, Lightbulb } from "lucide-react";
+import { motion } from 'framer-motion';
+import { Send, Bot, BarChart3, TrendingUp, Coins, PieChart, Lightbulb } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 

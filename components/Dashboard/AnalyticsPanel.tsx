@@ -1,6 +1,6 @@
 'use client';
 
-import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts';
 import { AssetCard } from "./AssetCard";
 import { Wallet, X } from "lucide-react";
 import { Button } from '@/components/ui/button';
