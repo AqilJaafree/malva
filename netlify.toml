@@ -1,6 +1,7 @@
 [build]
   command = "pnpm install && pnpm run build"
   publish = ".next"
+  ignore = "malva-mcp/**"
 
 [build.environment]
   NODE_VERSION = "20"
