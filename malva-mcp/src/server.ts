@@ -260,7 +260,7 @@ app.get("/", (_req: Request, res: Response) => {
     capabilities: {
       resources: 1,
       tools: 11,
-      prompts: 1,
+      prompts: 6,
     },
     payment: {
       enabled: true,

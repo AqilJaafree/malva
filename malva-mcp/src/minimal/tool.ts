@@ -342,6 +342,10 @@ export function setupMinimalTool(server: McpServer): void {
           targetAssets = SOLANA_ASSETS.filter(a => a.category === category);
         }
 
+        // Check available OHLC data first
+        const stats = priceService.getOHLCStats();
+        console.log('[RSI Analysis] Available OHLC data:', stats);
+
         // Analyze all target assets
         const analysisPromises = targetAssets.map(a =>
           rsiService.analyzeAsset(a, interval)

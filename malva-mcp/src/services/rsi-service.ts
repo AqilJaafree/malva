@@ -38,7 +38,7 @@ const RSI_THRESHOLDS: Record<string, RSIThresholds> = {
     period: 14,
     oversold: 30,
     overbought: 70,
-    timeframe: '1h',
+    timeframe: '5m',     // Changed from 1h to 5m for faster data accumulation (30 candles = 2.5 hours instead of 30 hours)
     stopLoss: 0.03,      // 3%
     takeProfit: 0.05     // 5%
   },
@@ -51,10 +51,10 @@ const RSI_THRESHOLDS: Record<string, RSIThresholds> = {
     takeProfit: 0.04     // 4%
   },
   'gold': {
-    period: 21,
+    period: 14,          // Reduced from 21 to 14 for consistency
     oversold: 25,
     overbought: 75,
-    timeframe: '1h',
+    timeframe: '5m',     // Changed from 1h to 5m for faster data accumulation
     stopLoss: 0.015,     // 1.5%
     takeProfit: 0.03     // 3%
   }
@@ -329,7 +329,8 @@ export class RSIService {
 
     for (const interval of intervals) {
       try {
-        const ohlcData = await this.priceService.getOHLCData(mintAddress, interval, 50);
+        // Reduced from 50 to 20 candles for faster availability
+        const ohlcData = await this.priceService.getOHLCData(mintAddress, interval, 20);
         const candles: OHLCCandle[] = ohlcData.map(d => ({
           timestamp: d.timestamp,
           open: d.open,
@@ -371,8 +372,9 @@ export class RSIService {
     const thresholds = RSI_THRESHOLDS[asset.category];
     const timeframe = interval || (thresholds.timeframe as TimeInterval);
 
-    // Get OHLC data
-    const ohlcData = await this.priceService.getOHLCData(asset.mintAddress, timeframe, 100);
+    // Get OHLC data - reduced from 100 to 30 candles for faster availability
+    // This allows RSI to work with less historical data (14-period RSI needs minimum 15 candles)
+    const ohlcData = await this.priceService.getOHLCData(asset.mintAddress, timeframe, 30);
     const candles: OHLCCandle[] = ohlcData.map(d => ({
       timestamp: d.timestamp,
       open: d.open,
