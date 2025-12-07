@@ -27,7 +27,7 @@ export default function DebugInfo() {
             <p className="font-bold mb-1">Wallets:</p>
             {wallets.map((wallet, i) => (
               <div key={i} className="ml-2 mb-2">
-                <p>#{i + 1}: {wallet.walletClientType}</p>
+                <p>#{i + 1}: Solana {wallet.address.startsWith('0x') ? '❌ (EVM!)' : '✅'}</p>
                 <p className="break-all">{wallet.address.slice(0, 20)}...</p>
               </div>
             ))}

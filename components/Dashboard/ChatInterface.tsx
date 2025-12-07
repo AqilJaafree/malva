@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { Send, Bot, BarChart3, TrendingUp, Coins, PieChart, Lightbulb } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useMCPData } from '@/hooks/useMCPData';
+import { useFundWallet, useWallets } from '@privy-io/react-auth/solana';
 
 interface Message {
   id: string;
@@ -50,6 +52,19 @@ export function ChatInterface({ onMessageSent, onBotResponseComplete, onToggleAn
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // MCP data fetching hook (with X402 payments)
+  const {
+    getCurrentPrices,
+    getRSIAnalysis,
+    getCryptoNews,
+    isWalletReady,
+    isCreatingWallet,
+  } = useMCPData();
+
+  // Fund wallet hook for insufficient balance
+  const { wallets } = useWallets();
+  const { fundWallet } = useFundWallet();
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -60,6 +75,84 @@ export function ChatInterface({ onMessageSent, onBotResponseComplete, onToggleAn
 
   const handlePromptClick = (prompt: string) => {
     setInput(prompt);
+  };
+
+  /**
+   * Detect if user query needs real-time data from MCP
+   * Returns data context to include in AI prompt
+   */
+  const fetchMCPDataIfNeeded = async (query: string): Promise<string | null> => {
+    console.log('[ChatInterface] Checking if MCP data needed for query:', query);
+    console.log('[ChatInterface] Wallet ready:', isWalletReady);
+    console.log('[ChatInterface] Creating wallet:', isCreatingWallet);
+
+    if (isCreatingWallet) {
+      console.log('[ChatInterface] ⏳ Wallet is being created - please wait');
+      return 'Note: Creating your wallet, please wait a moment...';
+    }
+
+    if (!isWalletReady) {
+      console.warn('[ChatInterface] ⚠️ Wallet not ready - skipping MCP data fetch');
+      return 'Note: Wallet not ready for real-time data. Refresh the page or try again.';
+    }
+
+    const lowerQuery = query.toLowerCase();
+
+    try {
+      // Check for price-related queries
+      if (lowerQuery.includes('price') || lowerQuery.includes('cost') || lowerQuery.includes('trading at')) {
+        console.log('[ChatInterface] 💰 Price query detected, fetching prices...');
+        const category = lowerQuery.includes('stock') || lowerQuery.includes('tesla') || lowerQuery.includes('apple')
+          ? 'rwa-stocks'
+          : lowerQuery.includes('gold') || lowerQuery.includes('paxg')
+          ? 'gold'
+          : lowerQuery.includes('btc') || lowerQuery.includes('bitcoin')
+          ? 'wrapped-btc'
+          : undefined;
+
+        const priceData = await getCurrentPrices(category);
+        console.log('[ChatInterface] ✅ Price data received:', priceData);
+        return `\n\n[REAL-TIME DATA - Paid via X402]\n${JSON.stringify(priceData, null, 2)}`;
+      }
+
+      // Check for RSI/trading signals queries
+      if (lowerQuery.includes('rsi') || lowerQuery.includes('buy') || lowerQuery.includes('sell') || lowerQuery.includes('signal') || lowerQuery.includes('indicator')) {
+        console.log('[ChatInterface] 📊 RSI/signal query detected, fetching analysis...');
+        const rsiData = await getRSIAnalysis();
+        console.log('[ChatInterface] ✅ RSI data received:', rsiData);
+        return `\n\n[REAL-TIME RSI ANALYSIS - Paid via X402]\n${JSON.stringify(rsiData, null, 2)}`;
+      }
+
+      // Check for news queries
+      if (lowerQuery.includes('news') || lowerQuery.includes('latest') || lowerQuery.includes('happening')) {
+        console.log('[ChatInterface] 📰 News query detected, fetching news...');
+        const newsData = await getCryptoNews({ limit: 5 });
+        console.log('[ChatInterface] ✅ News data received:', newsData);
+        return `\n\n[LATEST CRYPTO NEWS - Paid via X402]\n${JSON.stringify(newsData, null, 2)}`;
+      }
+
+      console.log('[ChatInterface] ℹ️ No MCP data keywords detected');
+      return null;
+    } catch (error) {
+      console.error('[ChatInterface] ❌ MCP data fetch error:', error);
+
+      // Check if error is due to insufficient funds
+      if (error instanceof Error && error.message.includes('INSUFFICIENT_FUNDS')) {
+        console.log('[ChatInterface] 💰 Insufficient funds - prompting to add funds...');
+
+        // Prompt user to fund wallet (first wallet is always Solana)
+        const solanaWallet = wallets[0];
+        if (solanaWallet) {
+          setTimeout(() => {
+            fundWallet({ address: solanaWallet.address });
+          }, 500);
+        }
+
+        return `\n\n[INSUFFICIENT FUNDS: Please add USDC to your wallet to access real-time data. A funding modal will appear shortly.]`;
+      }
+
+      return `\n\n[DATA FETCH ERROR: ${error instanceof Error ? error.message : 'Unknown error'}]`;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,26 +167,73 @@ export function ChatInterface({ onMessageSent, onBotResponseComplete, onToggleAn
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setIsLoading(true);
-    
+
     // Trigger the layout expansion
     onMessageSent();
 
-    // Simulate bot response
-    setTimeout(() => {
+    try {
+      // Fetch real-time data from MCP if needed (with X402 payment)
+      const mcpData = await fetchMCPDataIfNeeded(currentInput);
+
+      // Enhance user query with real-time data
+      const enhancedQuery = mcpData
+        ? `${currentInput}${mcpData}\n\nUse the real-time data above to answer the user's question accurately.`
+        : currentInput;
+
+      // Call Groq API with enhanced query
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [
+            ...messages.map(msg => ({
+              role: msg.sender === 'user' ? 'user' : 'assistant',
+              content: msg.content,
+            })),
+            {
+              role: 'user',
+              content: enhancedQuery,
+            },
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from AI');
+      }
+
+      const data = await response.json();
+
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: "I've analyzed the market data based on your request. Here's a summary of the top performing staking assets right now. Ethereum is showing strong momentum with a 13.62% reward rate.",
+        content: data.message,
         sender: 'bot',
         timestamp: new Date(),
       };
+
       setMessages(prev => [...prev, botMessage]);
       setIsLoading(false);
-      
+
       // Trigger analytics panel to show after bot finishes responding
       onBotResponseComplete();
-    }, 1500);
+    } catch (error) {
+      console.error('Error calling chat API:', error);
+
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "I apologize, but I'm having trouble connecting right now. Please try again in a moment.",
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
+      setIsLoading(false);
+    }
   };
 
   return (

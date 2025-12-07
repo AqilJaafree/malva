@@ -11,6 +11,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { FundWalletButton } from '@/components/FundWalletButton';
+import { DevFundButton } from '@/components/DevFundButton';
+import { ClearSessionButton } from '@/components/ClearSessionButton';
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -46,7 +49,13 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
       </div>
       
       {/* Right side actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
+        {/* Dev Buttons - Remove these after testing */}
+        {authenticated && <DevFundButton />}
+        <ClearSessionButton />
+        {/* Uncomment after enabling funding in Privy Dashboard: */}
+        {/* {authenticated && <FundWalletButton />} */}
+
         {/* Wallet & User Dropdown */}
         {authenticated && (
           <DropdownMenu>
